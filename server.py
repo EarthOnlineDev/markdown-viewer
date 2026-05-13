@@ -5,7 +5,7 @@ Usage:
   mdview              # 启动服务，打开浏览器
   mdview file.md      # 启动服务并直接打开指定文件
 """
-import sys, os, http.server, urllib.parse, webbrowser, socket
+import sys, os, http.server, urllib.parse, webbrowser, socket, threading
 
 VIEWER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'md-viewer.html')
 PORT = 9274
@@ -14,6 +14,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def _cors(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        self.send_header('Access-Control-Allow-Private-Network', 'true')
 
     def do_OPTIONS(self):
         self.send_response(204)
@@ -74,7 +75,20 @@ if __name__ == '__main__':
         webbrowser.open(url)
         sys.exit(0)
 
-    server = http.server.HTTPServer(('127.0.0.1', PORT), Handler)
+    class ThreadedServer(http.server.HTTPServer):
+        daemon_threads = True
+        def process_request(self, request, client_address):
+            t = threading.Thread(target=self.process_request_thread, args=(request, client_address))
+            t.daemon = True
+            t.start()
+        def process_request_thread(self, request, client_address):
+            try:
+                self.finish_request(request, client_address)
+            except Exception:
+                pass
+            self.shutdown_request(request)
+
+    server = ThreadedServer(('127.0.0.1', PORT), Handler)
     print(f'Markdown Viewer 已启动: http://127.0.0.1:{PORT}/')
     if file_arg:
         print(f'打开文件: {path}')

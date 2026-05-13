@@ -920,7 +920,11 @@ function handleInput(val) {
   val = val.trim();
   if (!val) return;
   if (isLocalPath(val)) {
-    loadLocalFile(val);
+    if (isLocalServer) {
+      loadLocalFile(val);
+    } else {
+      window.location.href = 'http://127.0.0.1:9274/?file=' + encodeURIComponent(val);
+    }
     return;
   }
   loadFromUrl(val);
@@ -928,9 +932,8 @@ function handleInput(val) {
 
 async function loadLocalFile(path) {
   showToast('加载中…');
-  const base = isLocalServer ? '' : 'http://127.0.0.1:9274';
   try {
-    const res = await fetch(base + '/api/read?path=' + encodeURIComponent(path));
+    const res = await fetch('/api/read?path=' + encodeURIComponent(path));
     if (!res.ok) throw new Error('文件未找到');
     const text = await res.text();
     renderMd(text, extractFilename(path));
@@ -939,11 +942,7 @@ async function loadLocalFile(path) {
     u.searchParams.set('file', path);
     history.replaceState({}, '', u);
   } catch (err) {
-    if (!isLocalServer) {
-      showToast('无法连接本地服务。请先运行 mdview 命令启动本地服务', true);
-    } else {
-      showToast('加载失败: ' + err.message, true);
-    }
+    showToast('加载失败: ' + err.message, true);
   }
 }
 
@@ -1120,7 +1119,8 @@ function checkImages() {
   const params = new URLSearchParams(window.location.search);
   const file = params.get('file');
   const url = params.get('url');
-  if (file) loadLocalFile(file);
+  if (file && isLocalServer) loadLocalFile(file);
+  else if (file && !isLocalServer) window.location.href = 'http://127.0.0.1:9274/?file=' + encodeURIComponent(file);
   else if (url) loadFromUrl(url);
 })();
 </script>
