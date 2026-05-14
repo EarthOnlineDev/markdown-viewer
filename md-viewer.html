@@ -916,33 +916,38 @@ function extractFilename(str) {
   return str.split('/').pop() || str;
 }
 
+const LOCAL_API = 'http://127.0.0.1:9274';
+
 function handleInput(val) {
   val = val.trim();
   if (!val) return;
   if (isLocalPath(val)) {
-    if (isLocalServer) {
-      loadLocalFile(val);
-    } else {
-      window.location.href = 'http://127.0.0.1:9274/?file=' + encodeURIComponent(val);
-    }
+    loadLocalFile(val);
     return;
   }
   loadFromUrl(val);
 }
 
 async function loadLocalFile(path) {
+  const apiBase = isLocalServer ? '' : LOCAL_API;
   showToast('加载中…');
   try {
-    const res = await fetch('/api/read?path=' + encodeURIComponent(path));
+    const res = await fetch(apiBase + '/api/read?path=' + encodeURIComponent(path));
     if (!res.ok) throw new Error('文件未找到');
     const text = await res.text();
     renderMd(text, extractFilename(path));
 
-    const u = new URL(window.location);
-    u.searchParams.set('file', path);
-    history.replaceState({}, '', u);
+    try {
+      const u = new URL(window.location);
+      u.searchParams.set('file', path);
+      history.replaceState({}, '', u);
+    } catch (_) {}
   } catch (err) {
-    showToast('加载失败: ' + err.message, true);
+    if (!isLocalServer && err.name === 'TypeError') {
+      showToast('本地服务未运行，请先执行 mdview 启动服务', true);
+    } else {
+      showToast('加载失败: ' + err.message, true);
+    }
   }
 }
 
@@ -1072,6 +1077,8 @@ copyBtn.addEventListener('click', () => {
 
 // ===== Paste markdown =====
 document.addEventListener('paste', e => {
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
   if (reader.style.display !== 'none') return;
   const text = e.clipboardData.getData('text');
   if (text && text.length > 10) renderMd(text, '粘贴内容');
@@ -1119,8 +1126,7 @@ function checkImages() {
   const params = new URLSearchParams(window.location.search);
   const file = params.get('file');
   const url = params.get('url');
-  if (file && isLocalServer) loadLocalFile(file);
-  else if (file && !isLocalServer) window.location.href = 'http://127.0.0.1:9274/?file=' + encodeURIComponent(file);
+  if (file) loadLocalFile(file);
   else if (url) loadFromUrl(url);
 })();
 </script>
