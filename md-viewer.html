@@ -409,10 +409,9 @@
     flex-shrink: 0;
   }
 
-  /* landing actions: clipboard / paste */
+  /* landing actions: paste */
   .landing-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
-  .action-row { display: flex; gap: 8px; }
-  .action-row .btn { flex: 1; justify-content: center; padding: 11px 14px; }
+  .paste-btn { width: 100%; justify-content: center; padding: 11px 14px; }
   .paste-box { display: none; }
   .paste-box.open { display: block; margin-top: 2px; }
   .paste-box textarea {
@@ -433,44 +432,15 @@
   .paste-box textarea:focus { border-color: var(--drop-active-border); }
   .paste-box .paste-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
 
-  /* WeChat / Feishu open-on-mobile help */
-  .landing-help {
-    margin-top: 18px;
-    text-align: left;
-    border: 1px solid var(--rule);
-    border-radius: var(--r-card);
-    background: var(--card);
-    overflow: hidden;
-  }
-  .landing-help summary {
-    list-style: none;
-    cursor: pointer;
-    padding: 12px 16px;
+  /* one-line hint for the WeChat/Feishu → file path */
+  .landing-hint {
+    margin-top: 16px;
     font-family: var(--font-ui);
-    font-size: 13.5px;
-    color: var(--soft);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-align: center;
   }
-  .landing-help summary::-webkit-details-marker { display: none; }
-  .landing-help summary .chev { margin-left: auto; transition: transform .2s; color: var(--muted); }
-  .landing-help[open] summary .chev { transform: rotate(90deg); }
-  .landing-help .help-body { padding: 2px 16px 14px; font-family: var(--font-ui); font-size: 12.5px; color: var(--soft); line-height: 1.7; }
-  .landing-help .help-body ol { margin: 4px 0 10px; padding-left: 18px; }
-  .landing-help .help-body li { margin: 3px 0; }
-  .landing-help .help-body b { color: var(--ink); font-weight: 600; }
-  .landing-help .plat {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--a-blue);
-    font-weight: 700;
-    margin-top: 8px;
-  }
-  html[data-theme="aiself"] .landing-help .plat:nth-of-type(1) { color: var(--a-green); }
-  html[data-theme="aiself"] .landing-help .plat:nth-of-type(3) { color: var(--a-orange); }
 
   /* footer: Built by EarthOnline */
   .app-footer {
@@ -1074,7 +1044,8 @@
     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M7.5 1a.5.5 0 0 1 .5.5V7h5.5a.5.5 0 0 1 0 1H8v5.5a.5.5 0 0 1-1 0V8H1.5a.5.5 0 0 1 0-1H7V1.5A.5.5 0 0 1 7.5 1z"/></svg>
     <span class="btn-label">打开文件</span>
   </label>
-  <input type="file" id="fileInput" accept=".md,.markdown,.txt">
+  <!-- no `accept`: iOS Files greys out .md when accept is set, making it unselectable -->
+  <input type="file" id="fileInput">
   <button class="primary" id="copyBtn" style="display:none">
     <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z"/><path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z"/></svg>
     <span class="btn-label">复制内容</span>
@@ -1108,14 +1079,11 @@
     </div>
     <div class="drop-area" id="dropArea">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 5v14m-5-4l5 4 5-4"/><rect x="3" y="2" width="18" height="20" rx="3"/></svg>
-      <p>拖放或点击选择 Markdown 文件</p>
-      <small>支持 .md / .markdown / .txt</small>
+      <p>打开 Markdown 文件</p>
+      <small>点此选择文件</small>
     </div>
     <div class="landing-actions">
-      <div class="action-row">
-        <button class="btn" type="button" id="clipBtn">📋 从剪贴板粘贴</button>
-        <button class="btn" type="button" id="pasteToggleBtn">✎ 粘贴文本</button>
-      </div>
+      <button class="btn paste-btn" type="button" id="pasteBtn">粘贴 Markdown 文本</button>
       <div class="paste-box" id="pasteBox">
         <textarea id="pasteArea" placeholder="把 Markdown 文本粘贴到这里…"></textarea>
         <div class="paste-actions"><button class="btn primary" type="button" id="pasteRenderBtn">渲染</button></div>
@@ -1126,26 +1094,7 @@
       <input type="text" id="urlInput" placeholder="输入路径或 URL…">
       <button id="urlLoadBtn">加载</button>
     </div>
-    <details class="landing-help">
-      <summary>📱 手机上在微信 / 飞书收到 md 文件？<span class="chev">›</span></summary>
-      <div class="help-body">
-        <div class="plat">通用 · 复制文本（含 iOS）</div>
-        <ol>
-          <li>在微信/飞书里点开该 md 文件，<b>全选 → 复制</b> 它的文字；</li>
-          <li>回到本页，点 <b>「从剪贴板粘贴」</b>，即可渲染。</li>
-        </ol>
-        <div class="plat">Android · 分享到 App</div>
-        <ol>
-          <li>把本页 <b>添加到主屏幕</b> 安装；</li>
-          <li>在微信/飞书里对文件选 <b>分享 → Markdown Viewer</b>，直接打开。</li>
-        </ol>
-        <div class="plat">iOS · 存到「文件」</div>
-        <ol>
-          <li>对文件选 <b>「存储到‘文件’」</b>；</li>
-          <li>回到本页点 <b>「打开文件」</b> 选择它。</li>
-        </ol>
-      </div>
-    </details>
+    <p class="landing-hint">微信／飞书收到的 .md：选「用其他应用打开」存到「文件」，再回本页打开。</p>
     <footer class="app-footer">Built by <a href="https://earthonline.site" target="_blank" rel="noopener">EarthOnline</a></footer>
   </div>
 </div>
@@ -1185,8 +1134,7 @@ const dragOverlay = $('dragOverlay');
 const urlInput   = $('urlInput');
 const imgBar     = $('imgBar');
 const imgPathInput = $('imgPathInput');
-const clipBtn        = $('clipBtn');
-const pasteToggleBtn = $('pasteToggleBtn');
+const pasteBtn       = $('pasteBtn');
 const pasteBox       = $('pasteBox');
 const pasteArea      = $('pasteArea');
 const pasteRenderBtn = $('pasteRenderBtn');
@@ -1445,35 +1393,16 @@ urlInput.addEventListener('keydown', e => {
   if (e.key === 'Enter') handleInput(urlInput.value);
 });
 
-// ===== Clipboard / manual paste (mobile-friendly: WeChat/Feishu → 复制 → 粘贴) =====
-function revealPasteBox() {
+// ===== Paste: try clipboard silently, else open a textarea to paste into =====
+pasteBtn.addEventListener('click', async () => {
+  if (navigator.clipboard && navigator.clipboard.readText) {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text && text.trim()) { renderMd(text, '剪贴板内容'); return; }
+    } catch (_) { /* blocked → fall through to manual paste */ }
+  }
   pasteBox.classList.add('open');
   pasteArea.focus();
-}
-
-clipBtn.addEventListener('click', async () => {
-  if (!navigator.clipboard || !navigator.clipboard.readText) {
-    showToast('该浏览器不支持读取剪贴板，请用「粘贴文本」', true);
-    revealPasteBox();
-    return;
-  }
-  try {
-    const text = await navigator.clipboard.readText();
-    if (text && text.trim()) {
-      renderMd(text, '剪贴板内容');
-    } else {
-      showToast('剪贴板是空的', true);
-      revealPasteBox();
-    }
-  } catch (err) {
-    showToast('无法读取剪贴板，请手动粘贴到下方文本框', true);
-    revealPasteBox();
-  }
-});
-
-pasteToggleBtn.addEventListener('click', () => {
-  pasteBox.classList.toggle('open');
-  if (pasteBox.classList.contains('open')) pasteArea.focus();
 });
 
 pasteRenderBtn.addEventListener('click', () => {
