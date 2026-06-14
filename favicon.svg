@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" width="60" height="40">
   <defs>
     <linearGradient id="mdGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#8A43E6"/>
-      <stop offset=".27" stop-color="#4FA8F0"/>
-      <stop offset=".5" stop-color="#1FA45D"/>
-      <stop offset=".73" stop-color="#F4811E"/>
-      <stop offset="1" stop-color="#E8482A"/>
+      <stop offset="0" stop-color="#8A43E6"/><stop offset=".2" stop-color="#8A43E6"/>
+      <stop offset=".2" stop-color="#4FA8F0"/><stop offset=".4" stop-color="#4FA8F0"/>
+      <stop offset=".4" stop-color="#1FA45D"/><stop offset=".6" stop-color="#1FA45D"/>
+      <stop offset=".6" stop-color="#F4811E"/><stop offset=".8" stop-color="#F4811E"/>
+      <stop offset=".8" stop-color="#E8482A"/><stop offset="1" stop-color="#E8482A"/>
     </linearGradient>
   </defs>
   <text x="30" y="32" text-anchor="middle" textLength="52" lengthAdjust="spacingAndGlyphs" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="40" letter-spacing="-2" fill="url(#mdGrad)">MD</text>
