@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" width="60" height="40">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
   <defs>
     <linearGradient id="mdGrad" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#8A43E6"/><stop offset=".2" stop-color="#8A43E6"/>
@@ -8,5 +8,5 @@
       <stop offset=".8" stop-color="#E8482A"/><stop offset="1" stop-color="#E8482A"/>
     </linearGradient>
   </defs>
-  <text x="30" y="32" text-anchor="middle" textLength="52" lengthAdjust="spacingAndGlyphs" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="40" letter-spacing="-2" fill="url(#mdGrad)">MD</text>
+  <text x="32" y="46" text-anchor="middle" textLength="56" lengthAdjust="spacingAndGlyphs" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="40" letter-spacing="-2" fill="url(#mdGrad)">MD</text>
 </svg>

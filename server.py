@@ -18,6 +18,7 @@ STATIC_TYPES = {
     '.js': 'text/javascript; charset=utf-8',
     '.svg': 'image/svg+xml',
     '.png': 'image/png',
+    '.ico': 'image/x-icon',
 }
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -59,7 +60,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             with open(path, 'rb') as f:
                 self.wfile.write(f.read())
 
-        elif parsed.path in ('/manifest.webmanifest', '/sw.js', '/favicon.svg') or \
+        elif parsed.path in ('/manifest.webmanifest', '/sw.js', '/favicon.svg', '/favicon.ico') or \
                 (parsed.path.startswith('/icons/') and parsed.path.endswith('.png')):
             self._serve_static(parsed.path)
 
