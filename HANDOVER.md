@@ -8,12 +8,12 @@
 
 - **双主题阅读器**：光谱（默认，取自 AISelf design-exploration 规范）+ 经典蓝（原样式）。原则：墨为底、色作点缀；用边框、不用大面积色块。
 - **手机端 / PWA**：
-  - 可安装（manifest + service worker + 图标）。
-  - **Web Share Target**：Android 可从微信/飞书「分享 → Markdown Viewer」直接打开 md（SW 接收 POST→暂存→渲染）。
-  - **file_handlers**：已安装后可作为 .md 的「打开方式」（Android/桌面 Chrome）。
-  - **剪贴板/粘贴**：通用（含 iOS）路径——复制 md 文本 →「从剪贴板粘贴」/ 粘贴文本框。
-  - 落地页含微信/飞书打开引导（通用/Android/iOS 三种）。
-  - 离线缓存 app shell + marked。
+  - **关键：file input 不能设 `accept`** —— iOS「文件」会把 .md 置灰、选不中（openradar #36726477）。这是"手机打不开"的真正原因，已移除 accept。
+  - **iOS 真实路径**：微信/飞书 →「用其他应用打开」→ 存到「文件」→ 回本页「打开 Markdown 文件」。（微信不渲染 md；飞书新版能渲染但样式很普通——我们的卖点 = 更美观。**不要再写"在微信里全选复制"，那是错的，看不到文字**。）
+  - **Android**：装 PWA 后可走 Web Share Target（分享→本应用）/ file_handlers（打开方式）。
+  - **粘贴**：一个「粘贴 Markdown 文本」按钮，先试读剪贴板、失败则展开文本框。
+  - 落地页只有一行提示，不写说明书（用户明确要求：好用的工具不需要长说明）。
+  - 可安装（manifest + service worker + 图标）；离线缓存 app shell + marked。
 - **底部署名**：落地页与阅读页均有 "Built by EarthOnline"（链 earthonline.site）。
 - **开源**：MIT License；GitHub 仓库 `EarthOnlineDev/markdown-viewer`（公开）。
 - **部署**：**https://md.earthonline.site**（自定义域名，已绑定+SSL）；备用 https://md-viewer-theta.vercel.app 。Vercel 团队 earthonlinedevs-projects / 项目 md-viewer。
