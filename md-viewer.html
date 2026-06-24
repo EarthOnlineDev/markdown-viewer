@@ -1220,6 +1220,19 @@ function handleInput(val) {
 
 async function loadLocalFile(path) {
   const apiBase = isLocalServer ? '' : LOCAL_API;
+
+  if (!isLocalServer) {
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 2000);
+      await fetch(LOCAL_API + '/api/read?path=__probe__', { signal: ctrl.signal });
+      clearTimeout(tid);
+    } catch {
+      showToast('本地服务未运行，请先执行 mdview 启动服务', true);
+      return;
+    }
+  }
+
   showToast('加载中…');
   try {
     const res = await fetch(apiBase + '/api/read?path=' + encodeURIComponent(path));
@@ -1233,11 +1246,7 @@ async function loadLocalFile(path) {
       history.replaceState({}, '', u);
     } catch (_) {}
   } catch (err) {
-    if (!isLocalServer && err.name === 'TypeError') {
-      showToast('本地服务未运行，请先执行 mdview 启动服务', true);
-    } else {
-      showToast('加载失败: ' + err.message, true);
-    }
+    showToast('加载失败: ' + err.message, true);
   }
 }
 
