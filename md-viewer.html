@@ -1220,15 +1220,14 @@ function handleInput(val) {
 
 async function loadLocalFile(path) {
   const apiBase = isLocalServer ? '' : LOCAL_API;
-
-  if (!isLocalServer) {
-    showToast('本地文件需通过 mdview 命令打开', true);
-    return;
-  }
-
   showToast('加载中…');
   try {
-    const res = await fetch(apiBase + '/api/read?path=' + encodeURIComponent(path));
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 3000);
+    const res = await fetch(apiBase + '/api/read?path=' + encodeURIComponent(path), {
+      signal: isLocalServer ? undefined : ctrl.signal
+    });
+    clearTimeout(tid);
     if (!res.ok) throw new Error('文件未找到');
     const text = await res.text();
     renderMd(text, extractFilename(path));
@@ -1239,7 +1238,11 @@ async function loadLocalFile(path) {
       history.replaceState({}, '', u);
     } catch (_) {}
   } catch (err) {
-    showToast('加载失败: ' + err.message, true);
+    if (!isLocalServer && (err.name === 'TypeError' || err.name === 'AbortError')) {
+      showToast('本地服务未运行，请先执行 mdview 启动服务', true);
+    } else {
+      showToast('加载失败: ' + err.message, true);
+    }
   }
 }
 
